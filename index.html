@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 - 专业前端工程师</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7b2cbf;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(15, 23, 42, 0.8);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border: rgba(0, 212, 255, 0.2);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 背景动画 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(123, 44, 191, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(123, 44, 191, 0.05) 0%, transparent 70%);
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 头部区域 */
+        header {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 48px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .avatar::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: -1;
+            opacity: 0.5;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.3; }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        /* 内容卡片 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* 技能标签 */
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .skill-tag {
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* 联系方式 */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            text-align: center;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(0, 212, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .contact-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .contact-value {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        /* 项目经历 */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding-left: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -29px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .card { padding: 24px; }
+            .contact-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header>
+            <div class="avatar">张</div>
+            <h1>张三</h1>
+            <p class="title">高级前端开发工程师</p>
+        </header>
+
+        <!-- 个人简介 -->
+        <div class="card">
+            <h2 class="card-title">关于我</h2>
+            <p style="line-height: 1.8; color: var(--text-secondary);">
+                拥有5年前端开发经验，专注于构建高性能、可扩展的Web应用。精通Vue、React等主流框架，
+                对用户体验和代码质量有着执着的追求。热爱技术探索，持续关注前端领域的新技术与最佳实践。
+                擅长将复杂的技术概念转化为优雅简洁的解决方案，享受与团队协作创造有价值产品的过程。
+            </p>
+            <div class="skills">
+                <span class="skill-tag">Vue.js</span>
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">TypeScript</span>
+                <span class="skill-tag">Node.js</span>
+                <span class="skill-tag">Webpack/Vite</span>
+                <span class="skill-tag">Tailwind CSS</span>
+                <span class="skill-tag">Git</span>
+                <span class="skill-tag">微前端</span>
+            </div>
+        </div>
+
+        <!-- 项目经历 -->
+        <div class="card">
+            <h2 class="card-title">项目经历</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">电商平台前端重构</div>
+                    <div class="timeline-desc">
+                        主导大型电商项目前端架构升级，将单体应用拆分为微前端架构，
+                        页面加载性能提升60%，支持多团队并行开发。
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">企业级组件库建设</div>
+                    <div class="timeline-desc">
+                        从零搭建公司级UI组件库，覆盖50+业务组件，
+                        服务10+产品线，大幅提升团队开发效率。
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">可视化数据大屏</div>
+                    <div class="timeline-desc">
+                        基于ECharts和WebGL开发实时数据可视化大屏，
+                        支持万级数据点流畅渲染，应用于多个智慧园区项目。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 联系方式 -->
+        <div class="card">
+            <h2 class="card-title">联系我</h2>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <div class="qr-placeholder">微信二维码</div>
+                    <div class="contact-label">微信</div>
+                    <div class="contact-value">zhangsan_dev</div>
+                </div>
+                <div class="contact-item">
+                    <div class="qr-placeholder">公众号</div>
+                    <div class="contact-label">公众号</div>
+                    <div class="contact-value">前端技术栈</div>
+                </div>
+                <div class="contact-item">
+                    <div class="qr-placeholder">GitHub</div>
+                    <div class="contact-label">GitHub</div>
+                    <div class="contact-value">@zhangsan</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-value" style="font-size: 0.9rem; margin-top: 40px;">
+                        zhangsan@email.com
+                    </div>
+                    <div class="contact-label" style="margin-top: 8px;">邮箱</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>用代码构建梦想，用技术创造价值</p>
+            <p style="margin-top: 8px; opacity: 0.7;">© 2024 个人主页 · Built with Passion</p>
+        </footer>
+    </div>
+</body>
+</html>
